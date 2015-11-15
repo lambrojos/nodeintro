@@ -1,0 +1,21 @@
+.row{
+    margin-bottom: 20px;
+}
+img{
+    width: 50%;
+}
+@media screen and (max-width: 767px) {
+
+    img{
+        width: 150%;
+    }
+
+    .btn.full{
+        width: 100%;
+    }
+    
+    [class^="col"], form .btn + .btn {
+        margin: 10px 0;
+    }
+}
+

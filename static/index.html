@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Handling Ninjas</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/hover.css">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body ng-app="handlingNinja">
+
+    <div class="container" ng-controller="NinjaCtrl">
+        <div class="row">
+            <div class="col-xs-12 text-center">
+                <h1>Pro ninja manager v0.1.0</h1>
+            </div>
+        </div>
+        <section ng-show="!detail">
+            <div class="row">
+                <div class="col-xs-2"></div>
+                <div class="col-xs-4">
+                    <strong>Name</strong>
+                </div>
+                <div class="col-xs-2">
+                    <strong>Age</strong>
+                </div>
+                <div class="col-xs-4">
+                    <strong>Actions</strong>
+                </div>
+            </div>
+            <div class="row" ng-repeat="ninja in ninjas">
+                <div class="col-xs-2 text-center">
+                    <img src="images/ninja.png" class="hvr-pop">
+                </div>
+                <div class="col-xs-4">
+                    {{ninja.name}}
+                </div>
+                <div class="col-xs-2">
+                    {{ninja.age}}
+                </div>
+                <div class="col-xs-4 text-right">
+                    <div class="btn btn-primary" ng-click="getNinja(ninja._id)">
+			<span class="hidden-xs">Details</span>
+			<i class="fa fa-search"></i>
+		    </div>
+                    <div class="btn btn-danger" ng-click="deleteNinja(ninja, ninja._id)">
+			<span class="hidden-xs">Delete</span>
+			<i class="fa fa-remove"></i>
+		    </div>
+                </div>
+            </div>
+            <div class="row">
+                <form ng-submit="createNinja()">
+                    <div class="col-sm-4">
+                        <input class="form-control" type="text" ng-model="newNinja.name" placeholder="Name" required>
+                    </div>
+                    <div class="col-sm-4">
+                        <input class="form-control" type="text" ng-model="newNinja.age" placeholder="Age" required>
+                    </div>
+                    <div class="col-sm-4 text-right">
+                        <button class="btn btn-success full">Create</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+        <section ng-show="detail">
+            <div class="row">
+                <form  ng-submit="updateNinja()">
+                    <div class="col-sm-4">
+                        <input class="form-control" type="text" ng-model="ninja.name" placeholder="Name">
+                    </div>
+                    <div class="col-sm-4">
+                        <input class="form-control" type="text" ng-model="ninja.age" placeholder="Age">
+                    </div>
+                    <div class="col-sm-4 text-right">
+                        <button class="btn btn-success full">Update</button>
+                        <div class="btn btn-default full" ng-click="detail = null">Back</div>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script src="lib/lodash/dist/lodash.min.js"></script>
+    <script src="lib/angular/angular.js"></script>
+    <script src="lib/angular-resource/angular-resource.js"></script>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script src="lib/angular-socket-io/socket.js"></script>
+    <script src="js/app.js"></script>
+
+    <script src="js/controller/ninja.controller.js"></script>
+
+    <script src="js/service/ninja.service.js"></script>
+
+    <script src="js/factory/lodash.factory.js"></script>
+    <script src="js/factory/socketio.factory.js"></script>
+
+</body>
+</html>
