@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('handlingNinja')
-    .controller('NinjaCtrl', function($scope, Ninja, _){
+    .controller('NinjaCtrl', function($scope, Ninja, _ /*, mySocket*/){
 
         // LISTEN TO SOCKET.IO EVENTS
         // ==========================A
@@ -26,45 +26,48 @@ angular.module('handlingNinja')
         // CRUD FUNCTIONS
         // ==========================
 
-        $scope.ninjas = [];
+      $scope.ninjas = [];
 
-        $scope.detail = null;
+      $scope.detail = null;
 
-        $scope.loadNinja = function(){
-            $scope.ninjas = Ninja.query();
-        };
+      $scope.loadNinja = function(){
+        $scope.ninjas = Ninja.query();
+      };
 
-        $scope.newNinja = {name: null, age: null};
+      $scope.newNinja = {name: null, age: null};
 
-        $scope.createNinja = function(){
-            var ninja = new Ninja($scope.newNinja);
+      $scope.createNinja = function(){
+        var ninja = new Ninja($scope.newNinja);
 
-            ninja.$save().then(function(res){
-                $scope.newNinja = {name: null, age: null};
-            });
-        };
+        ninja.$save().then(function(res){
+          $scope.newNinja = {name: null, age: null};
+          $scope.ninjas.push(new Ninja(ninja));
+        });
+      };
 
-        $scope.getNinja = function(_id){
-            Ninja.get({_id: _id}).$promise.then(function(ninja){
+      $scope.getNinja = function(_id){
+          Ninja.get({_id: _id}).$promise.then(function(ninja){
 
-              if(!ninja){
-                throw new Error('Ninja not found! Where is he hiding?');
-              }
-              $scope.ninja = ninja;
-              $scope.detail = true;
-            });
-        };
+            if(!ninja){
+              throw new Error('Ninja not found! Where is he hiding?');
+            }
+            $scope.ninja = ninja;
+            $scope.detail = true;
+          });
+      };
 
-        $scope.updateNinja = function(){
-            $scope.ninja.$save().then(function(res){
-                $scope.detail = null;
-                $scope.loadNinja();
-            });
-        };
+      $scope.updateNinja = function(){
+        $scope.ninja.$save().then(function(res){
 
-        $scope.deleteNinja = function(ninja){
-            ninja.$remove();
-        };
+          $scope.detail = null;
+          $scope.loadNinja();
+        });
+      };
 
-        $scope.loadNinja();
+      $scope.deleteNinja = function(ninja){
+        ninja.$remove();
+        _.remove($scope.ninjas, {_id: ninja._id});
+      };
+
+      $scope.loadNinja();
     });
