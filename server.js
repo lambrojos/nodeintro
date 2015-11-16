@@ -3,7 +3,7 @@
 //TODO BONUS: make eslint happy!
 
 // require the packages we need
- Hapi = require('hapi');
+var  Hapi = require('hapi');
 var server = new Hapi.Server();
 var bunyan = require('bunyan');
 
