@@ -44,11 +44,16 @@ function(err){
 
 
 
-var io = require('socket.io').listen(server.listener);
+/*
 
-io.sockets.on('connection', function (socket) {
+  SUPER BONUS: use socket.io
+
+  var io = require('socket.io').listen(server.listener);
   socket.emit('connected', { message: 'Welcome to realtime Ninjas' });
-});
+  io.emit('created', ninja);
+  io.emit('deleted', ninja);
+  io.emit('changed', ninja);
+*/
 
 
 /**
@@ -118,8 +123,10 @@ server.route({
         return reply(Boom.badImplementation(err));
       }
 
+      console.log(result);
       // and now?
-      reply(result);
+      // NOTE: the client expects an object but here we get an array
+      reply(result[0]);
     });
   }
 });
