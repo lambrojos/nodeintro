@@ -3,14 +3,16 @@
 //TODO BONUS: make eslint happy!
 
 // require the packages we need
-var Hapi = require('hapi');
+ Hapi = require('hapi');
 var server = new Hapi.Server();
 var bunyan = require('bunyan');
-var logger = bunyan.createLogger({name: 'the-ninja-log'});
+
+//create a bunyan logger, and give it the name you prefer
+var logger = '?';
 var path = require('path');
 
-//TODO require the database file and assign it to variable called "db"
-var db = require('./database');
+//TODO require the database.js file and assign it to variable called "db"
+//maybe there is something to do even in that file
 var Joi = require('joi');
 var Boom = require('boom');
 
@@ -25,7 +27,6 @@ var HOST = 'localhost';
  * https://docs.npmjs.com/cli/install
  *
  */
-var Inert = require('inert');
 
 server.connection({
   host: HOST,
@@ -63,13 +64,8 @@ io.sockets.on('connection', function (socket) {
  */
 server.route({
   method: 'GET',
-  path: '/{file*}',
-  handler: {
-    directory: {
-      index: 'index.html',
-      path: path.join(__dirname, 'static/' )
-    }
-  }
+  path: '?'
+  handler: '?'
 });
 
 
@@ -89,17 +85,32 @@ server.route({
  * you will need to use a regex :)
  *
  */
-/*var ninjaModel = Joi.object({
+var ninjaModel = Joi.object({
   name: Joi.number(),
   age: Joi.boolean(),
   gender: Joi.string()
-});*/
-var ninjaModel = Joi.object({
-  name: Joi.string().required().regex(/\w+/),
-  age: Joi.number().required().min(18),
-  _id: Joi.number().integer().positive()
 });
 
+/**
+ * TODO: write a whole handler that gets
+ * all the ninjas stored in the datasource: the db function used is
+ *
+ * db.find({}, function(err, res){ --- });
+ *
+ * then the result must be converted to an array with the toArray method
+ *
+ *	result.toArray(err, res){ //res can now be sent to the client
+ *
+ */
+server.route({
+  method: 'GET',
+  path: '/api/ninja',
+  handler: function (request, reply) {
+
+  }
+});
+
+// this route inserts a new ninja
 server.route({
   method: 'POST',
   path: '/api/ninja',
@@ -107,53 +118,23 @@ server.route({
   handler: function (request, reply) {
     /**
      * TODO persist the ninja into the datastore
-     * - data is sent via a POST http request
+     * - data is sent via a POST http request, put it in the postData variable
      */
-    var postData = request.payload;
+    var postData = '?';
     db.insert(postData, function(err, result){
 
       if(err){
+        //BONUS log all errors
 
-        logger.error(err);
+        //this is how you send errors to the client
         return reply(Boom.badImplementation(err));
       }
 
-      // and now?
-      reply(result);
+      // and now? send the result to the client
     });
   }
 });
 
-/**
- * TODO: now it's up to you to write a whole route that gets
- * all the ninjas stored in the datasource: the db function used is
- *
- * db.find(function(err, res){ --- }
- *
- */
-server.route({
-  method: 'GET',
-  path: '/api/ninja',
-  handler: function (request, reply) {
-    /**
-     * TODO persist the ninja into the datastore
-     * - data is in the
-     */
-    db.find({}, function(err, result){
-
-      if(err){
-        logger.error(err);
-        return reply(Boom.badImplementation(err));
-      }
-
-       // and now?
-      result.toArray(function(err, res){
-
-        reply(res);
-      });
-    });
-  }
-});
 
 
 
@@ -161,35 +142,28 @@ server.route({
  * TODO we need an api path like this
  * /api/ninja/123 where 123 is the id used for the database operations.
  *
+ * the path should be written in such a way that it should be availble in the
+ *
+ * request.params._id
  * http://hapijs.com/tutorials/routing
  *
  * BONUS - validate the id, it should be a positive integer, and of course
  * it should be required
+ *
+ *
  */
-var pathWithId = '/api/ninja/{_id}';
+var pathWithId = '?';
 
 //get a single ninja
 server.route({
   method: 'GET',
   path: pathWithId,
-  config: {
-    validate: { params: {_id: Joi.number().integer().positive() }}
-  },
   handler: function(request, reply){
 
     // TODO write the whole handler - the db function used the get a single
     // ninja is: db.findOne({_id: [id]), function(err, result){  ... }
     // http://hapijs.com/tutorials/routing
     //
-    db.findOne({ _id: request.params._id }, function(err, result){
-
-      if(err){
-        logger.error(err);
-        return reply(Boom.badImplementation(err));
-      }
-
-      reply(result);
-    });
   }
 });
 
@@ -200,30 +174,6 @@ server.route({
 // the id should be validated as always
 // to update an existing object in the database:
 // db.update({_id: [_id], [object with new values], function(err, res){...}
-server.route({
-  method: 'POST',
-  path: pathWithId,
-  config: {
-    validate: {
-      payload: ninjaModel,
-      params: {_id: Joi.number().integer().positive().required() }
-    },
-  },
-  handler: function(request, reply){
-
-    db.update({ _id: request.params._id }, request.payload,
-      function(err, result){
-
-        if(err){
-          logger.error(err);
-          return reply(Boom.badImplementation(err));
-        }
-        reply(result);
-      }
-    );
-  }
-});
-
 
 
 // delete a ninja
@@ -232,33 +182,12 @@ server.route({
 // the id should be validated as always
 // to delete an existing object in the database:
 // db.remove({_id: [_id], function(err, res){...}
-server.route({
-  method: 'DELETE',
-  path: pathWithId,
-
-  config: {
-    validate: {
-      params: {_id: Joi.number().integer().positive().required() }
-    }
-  },
-  handler: function(request, reply){
-
-    db.remove({ _id: request.params._id },
-
-      function(err, result){
-        if(err){
-          logger.error(err);
-          return reply(Boom.badImplementation(err));
-        }
-        reply(result);
-      }
-    );
-  }
-});
-
 
 
 server.start(function(){
   console.log('I live again - on '+ HOST +':'+ PORT);
   //TODO BONUS - log the fact that the app has started
 });
+
+
+// now that everything in order add socket.io events in the route handlers

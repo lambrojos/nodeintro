@@ -10,15 +10,13 @@ var path = require('path');
  */
 
 //var dbPath = '?';
-var dbPath = path.join(__dirname, 'db');
 
 var db = new Db(dbPath, {});
 // Fetch a collection to insert document into
 var collection = db.collection("ninja");
 
 /**
- * TODO collection must be the default export for this module
+ * TODO the collection var must be the default export for this module
  *
  * https://nodejs.org/api/modules.html#modules_cycles
  */
-module.exports = collection;
