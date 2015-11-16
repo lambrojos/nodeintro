@@ -54,7 +54,7 @@ io.sockets.on('connection', function (socket) {
 
 /**
  * TODO: use Inert to serve the client
- * Remember: static files folders can be nested so you probably will want to
+ * Remember: static files folders can be nested so you probably will want to,
  * use the directory handler
  *
  * BONUS: use the index property to specify a default file for the
@@ -64,7 +64,7 @@ io.sockets.on('connection', function (socket) {
  */
 server.route({
   method: 'GET',
-  path: '?'
+  path: '?',
   handler: '?'
 });
 
